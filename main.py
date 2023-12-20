@@ -2,18 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import integrate
 from scipy import constants
-
+import math
 
 # Шаг 1: Определение функции для уравнений ракеты
 def rocket_equations(t, v, M, m0, Ft, Cf, ro, S, g, k):
-    # Расчет параметров A и B для уравнения изменения скорости
-    A = Ft / (M - k * t)
-    B = (Cf * ro * S) / (2 * (M - k * t))
+    # Расчет параметров для изменения скорости сброса топлива
+    Ve = Ft / (M - k * t) - (Cf * ro * S) / (2 * (M - k * t)) * v**2
     # Вычисление производной скорости по времени
-    dvdt = A - B * v ** 2 - g
+    dvdt =  (math.log (m0 / (m0 - k * t)) - 0.5 * (ro / (m0 - k)) ) * Ve
     return dvdt
-
-
 #
 # Шаг 2: Определение функции для симуляции полета ракеты
 def simulate_rocket_flight(m0, M, Ft, Cf, ro, S, g, k, duration, num_points):
@@ -41,10 +38,10 @@ def simulate_rocket_flight(m0, M, Ft, Cf, ro, S, g, k, duration, num_points):
 rocket_data_kerbin = {
     "m0": 46904,
     "M": 46904 + 41482,
-    "Ft": 3268861.02,
+    "Ft": 7268861.02,
     "Cf": 0.5,
     "ro": 1.293,
-    "S": constants.pi * ((6.6 / 2) ** 2),
+    "S": constants.pi * ((6.6/2)**2),
     "g": 1.00034 * constants.g,
     "k": (46904 + 41482) / (3 * 60 + 5)
 }
